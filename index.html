@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Artists</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="js/main_client.js"></script>
+    <script src="js/ArtistHandler.js"></script>
+    <link href="css/Style.css" rel="stylesheet" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+
+    <!-- Complete CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    />
+    <!-- Complete JavaScript -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    />
+
+    <style>
+      #searchString,
+      #search-button {
+        float: right;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Welcome!</h2>
+      <br />
+      <h3>Add Artists</h3>
+      Name:
+      <input type="text" name="name" id="inputName" required /><br /><br />
+      Place of Birth: <input type="text" id="birthPlace" /><br /><br />
+      Date of Birth: <input type="date" id="birthDate" /><br /><br />
+      Favorite: <input type="checkbox" id="checkBox" value="true" /><br /><br />
+      <button class="btn btn-primary" id="add">Add</button>
+      <p id="message"></p>
+    </div>
+    <hr />
+    <div class="container">
+      <button class="btn btn-primary" onclick="searchName()" id="search-button">
+        Search
+      </button>
+      <input
+        type="text"
+        id="searchString"
+        placeholder="Enter a name..."
+        onkeyup="searchName()"
+      /><br />
+      <table class="table table-hover" id="table-content">
+        <thead>
+          <tr class="header">
+            <th>ID</th>
+            <th>Name</th>
+            <th>Birth Place</th>
+            <th>Birth Date</th>
+            <th>Favorite</th>
+          </tr>
+        </thead>
+        <!-- Table content will be loaded here -->
+      </table>
+    </div>
+  </body>
+</html>
