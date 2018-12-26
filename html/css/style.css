@@ -1,0 +1,35 @@
+h2{
+    text-align: center;
+    padding: 20px;
+}
+
+.border{
+    padding: 20px;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.pull-right{
+    float:right;
+}
+input[type=text]{
+    width: 60%;
+}
+.btn {
+    margin: 3px !important;
+}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
