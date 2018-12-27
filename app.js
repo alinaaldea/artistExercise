@@ -2,19 +2,20 @@ var http = require("http");
 var fs = require("fs");
 var path = require("path");
 var mongoose = require("mongoose");
+
 //Set up default mongoose connection
 mongoose.connect(
-  "mongodb://alinaaldeaDS: webProgr.test.41AA@ds231374.mlab.com:31374/artistdb",
-  { useMongoClient: true }
+  "mongodb://alinaaldeaDS:webProgr.test.41AA@ds231374.mlab.com:31374/artistdb",
+  { useNewUrlParser: true }
 );
 
 //Get the default connection
 var db = mongoose.connection;
 
 //model
-const Artist = require("models/artist");
+const Artist = require("./models/artist");
 
-http
+var server = http
   .createServer(function(request, response) {
     console.log("request ", request.url);
 
@@ -67,3 +68,11 @@ http
   })
   .listen(3000);
 console.log("Server running at http://127.0.0.1:3000");
+
+var io = require("socket.io")(server);
+io.on("connection", socket => {
+  socket.emit("welcome", "welcome to the socket.io server");
+  socket.on("disconnect", function() {
+    console.log("user disconnected");
+  });
+});
