@@ -32,19 +32,18 @@ app.get("/", function(req, res) {
 
 //HANDLE POST METHOD HERE WITH ARTIST LIST
 var artistList = [];
-var counter = 0;
+
 app.post("/addArtist", function(req, res) {
   var newArtist = req.body;
   console.log("\n\n-------------------------");
   console.log(newArtist);
   var artist = new Artist({
-    _id: counter,
+    _id: newArtist._id,
     name: newArtist.name,
     placeOfBirth: newArtist.birthPlace,
     dateOfBirth: newArtist.dob,
     status: newArtist.favourite
   });
-  counter++;
 
   artist.save(function(err) {
     if (err) console.log("couldn't save the artist in the database" + err);
@@ -52,8 +51,7 @@ app.post("/addArtist", function(req, res) {
   });
 
   artistList.push(artist);
-  console.log(artistList);
-  return res.json(artistList);
+  return res.json(artistList.sort(compare));
 });
 
 //fetch all artists from database
@@ -64,7 +62,7 @@ app.post("/uploadArtists", function(req, res) {
       "\nserver fetched the artists from the database:\n" +
         JSON.stringify(artists)
     );
-
+    artists.sort(compare);
     return res.json(artists);
   });
 });
@@ -92,3 +90,10 @@ app.post("/deleteArtist", function(req, res) {
     return res.json(artists);
   });
 });
+function compare(a,b) {
+  if (a._id < b._id)
+    return -1;
+  if (a._id > b._id)
+    return 1;
+  return 0;
+}

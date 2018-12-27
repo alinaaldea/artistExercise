@@ -1,3 +1,5 @@
+
+var artistList = [];
 function ajaxCall(endPoint, data) {
   //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
   fetch(endPoint, {
@@ -19,12 +21,17 @@ function ajaxCall(endPoint, data) {
     })
     .then(response => {
       //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
-      console.log(response);
-      showArtist(response);
+      //CONCAT EXISTING LIST WITH NEW LIST & FILTER DUPLICATION
+      if(endPoint === "/addArtist"){
+        artistList = artistList.concat(response)
+      } else {
+         artistList = response
+      }
+      console.log(artistList);
+      showArtist(artistList);
     });
 }
 
-var artistList = [];
 
 function addArtist() {
   var name = $("#name")
@@ -42,9 +49,19 @@ function addArtist() {
   } else {
     favourite = false;
   }
+  var id;
+  //CHECK IF ANY ARTIST EXIST, AND SET ID TO THE HIGHEST EXISTING ID + 1
+  if(artistList.length>1){
+    id = parseInt(artistList[artistList.length-1]._id)+1;
+    console.log(id)
+  }else{
+    id = 0;
+    console.log(id)
+  }
   if (name && birthPlace && dob) {
     //store the artist in the local list
     var artist = {
+      _id:id,
       name: name,
       birthPlace: birthPlace,
       dob: dob,
@@ -76,9 +93,7 @@ function showArtist(artistListRes) {
         "</td></tr>";
     });
     html += "</table>";
-    $("#artList")
-      .empty()
-      .append(html);
+    $("#artList").empty().append(html);
   }
 }
 
@@ -106,33 +121,8 @@ function deleteById() {
   //send this is to the server and fetch the new list
 }
 
-function ajaxCall_fetchAllArtists(endPoint, data) {
-  //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
-  fetch(endPoint, {
-    method: "POST",
-    path: "./app.js",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      mode: "cors"
-    }
-  })
-    .then(response => {
-      var contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return response.json();
-      }
-      throw new TypeError("Oops, we haven't got JSON!");
-    })
-    .then(response => {
-      //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
-      console.log(response);
-      showArtist(response);
-    });
-}
 
 $(document).ready(function() {
-  console.log("upload artists called by client");
-  ajaxCall_fetchAllArtists("/uploadArtists");
-  
+  console.log("Get existing artists from db");
+  ajaxCall("/uploadArtists");
 });
