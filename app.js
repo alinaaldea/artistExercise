@@ -57,7 +57,7 @@ app.post("/addArtist", function(req, res) {
 });
 
 //fetch all artists from database
-app.get("/uploadArtists", function(req, res) {
+app.post("/uploadArtists", function(req, res) {
   Artist.find({}, function(err, artists) {
     if (err) console.log("Couldn't fetch the artist from the database: " + err);
     console.log(
@@ -65,7 +65,7 @@ app.get("/uploadArtists", function(req, res) {
         JSON.stringify(artists)
     );
 
-    return res.json(JSON.stringify(artists));
+    return res.json(artists);
   });
 });
 
@@ -89,6 +89,6 @@ app.post("/deleteArtist", function(req, res) {
   //return the list of remaining artists
   Artist.find({}, function(err, artists) {
     if (err) console.log("Couldn't fetch the artist from the database: " + err);
-    return res.json(JSON.stringify(artists));
+    return res.json(artists);
   });
 });

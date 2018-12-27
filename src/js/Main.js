@@ -109,7 +109,7 @@ function deleteById() {
 function ajaxCall_fetchAllArtists(endPoint, data) {
   //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
   fetch(endPoint, {
-    method: "GET",
+    method: "POST",
     path: "./app.js",
     headers: {
       Accept: "application/json",
@@ -120,7 +120,7 @@ function ajaxCall_fetchAllArtists(endPoint, data) {
     .then(response => {
       var contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        return response;
+        return response.json();
       }
       throw new TypeError("Oops, we haven't got JSON!");
     })
