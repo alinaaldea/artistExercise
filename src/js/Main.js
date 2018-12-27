@@ -1,6 +1,7 @@
-const WebSocket = require("ws");
+const WebSocket = require("websocket").client;
 var connection = new WebSocket("ws://127.0.0.1:3000");
 
+var artistList = [];
 connection.onopen = function() {
   // connection is opened and ready to use
   console.log("client connected");
@@ -40,8 +41,16 @@ function addArtist() {
     favourite = false;
   }
   if (name && birthPlace && dob) {
-    //send request to backend to save artist
-    saveArtist(name, birthPlace, dob, favourite);
+    //store the artist in the local list
+    var artist = {
+      name: name,
+      birthPlace: birthPlace,
+      dob: dob,
+      favourite: favourite
+    };
+    artistList.push(artist);
+    console.log("message sent to the server");
+    connection.on("send artist", JSON.stringify(artist));
     showArtist();
   }
 }

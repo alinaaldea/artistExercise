@@ -87,6 +87,11 @@ wsServer.on("request", function(request) {
     }
   });
 
+  connection.on("send artist", function(data) {
+    var artist = JSON.parse(data);
+    console.log(artist);
+  });
+
   connection.on("close", function(connection) {
     // close user connection
   });
