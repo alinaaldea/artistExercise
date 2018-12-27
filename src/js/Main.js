@@ -1,39 +1,32 @@
-const WebSocket = require("websocket").client;
-var connection = new WebSocket("ws://127.0.0.1:3000");
+function ajaxCall(endPoint, data) {
+  fetch(endPoint, {
+    method: "POST",
+    path: "./app.js",
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'mode': 'cors'
+    },
+    body: JSON.stringify(data)
+}).then((response) => {
+  var contentType = response.headers.get("content-type");
+  if(contentType && contentType.includes("application/json")) {
+     return response.json();
+  }
+  throw new TypeError("Oops, we haven't got JSON!");
+})
+.then((response) => { 
+  console.log(response);
+  showArtist(response);
+})
+}
 
 var artistList = [];
-connection.onopen = function() {
-  // connection is opened and ready to use
-  console.log("client connected");
-};
-
-connection.onerror = function(error) {
-  // an error occurred when sending/receiving data
-  console.log("Error: " + error);
-};
-
-connection.onmessage = function(message) {
-  // try to decode json (I assume that each message
-  // from server is json)
-  try {
-    var json = JSON.parse(message.data);
-  } catch (e) {
-    console.log("This doesn't look like a valid JSON: ", message.data);
-    return;
-  }
-  // handle incoming message
-};
 
 function addArtist() {
-  var name = $("#name")
-    .val()
-    .trim();
-  var birthPlace = $("#birth_place")
-    .val()
-    .trim();
-  var dob = $("#dob")
-    .val()
-    .trim();
+  var name = $("#name").val().trim();
+  var birthPlace = $("#birth_place").val().trim();
+  var dob = $("#dob").val().trim();
   var favourite;
   if ($("#favourite").is(":checked")) {
     favourite = true;
@@ -48,19 +41,18 @@ function addArtist() {
       dob: dob,
       favourite: favourite
     };
-    artistList.push(artist);
+    var serverResponse = ajaxCall("/addArtist", artist);
     console.log("message sent to the server");
-    connection.on("send artist", JSON.stringify(artist));
-    showArtist();
+
   }
 }
 //retrieve list of artists and show in table
-function showArtist() {
-  if (artistList !== null) {
+function showArtist(artistListRes) {
+  if (artistListRes) {
     var html =
       "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
     var counter = 0;
-    artistList.forEach(function(artist) {
+    artistListRes.forEach(function(artist) {
       counter++;
       html +=
         "<tr><td>" +
