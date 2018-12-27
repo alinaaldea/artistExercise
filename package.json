@@ -17,5 +17,7 @@
     "url": "https://github.com/alinaaldea/artistExercise/issues"
   },
   "homepage": "https://github.com/alinaaldea/artistExercise#readme",
-  "dependencies": {}
+  "dependencies": {
+    "mongoose": "^5.4.1"
+  }
 }
