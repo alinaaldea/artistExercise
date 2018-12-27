@@ -25,16 +25,16 @@ app.listen(port, () =>  {
 });
 app.use(express.static(path.join(__dirname, 'src')));
 app.use(bodyParser.json());
-
+//HANDLE INITIAL CONNECTION
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/src/index.html');
 });
+
+//HANDLE POST METHOD HERE WITH ARTIST LIST
 var artistList = [];
 app.post("/addArtist", function(req,res){
   var newArtist = req.body;
   artistList.push(newArtist);
-  //empty newArtistValue here
-  newArtist = []
   console.log(artistList)
   return res.json(artistList)
 

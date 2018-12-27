@@ -1,4 +1,5 @@
 function ajaxCall(endPoint, data) {
+  //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
   fetch(endPoint, {
     method: "POST",
     path: "./app.js",
@@ -16,6 +17,7 @@ function ajaxCall(endPoint, data) {
   throw new TypeError("Oops, we haven't got JSON!");
 })
 .then((response) => { 
+  //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
   console.log(response);
   showArtist(response);
 })
@@ -41,7 +43,7 @@ function addArtist() {
       dob: dob,
       favourite: favourite
     };
-    var serverResponse = ajaxCall("/addArtist", artist);
+    ajaxCall("/addArtist", artist);
     console.log("message sent to the server");
 
   }
