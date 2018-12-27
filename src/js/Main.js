@@ -4,31 +4,38 @@ function ajaxCall(endPoint, data) {
     method: "POST",
     path: "./app.js",
     headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'mode': 'cors'
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      mode: "cors"
     },
     body: JSON.stringify(data)
-}).then((response) => {
-  var contentType = response.headers.get("content-type");
-  if(contentType && contentType.includes("application/json")) {
-     return response.json();
-  }
-  throw new TypeError("Oops, we haven't got JSON!");
-})
-.then((response) => { 
-  //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
-  console.log(response);
-  showArtist(response);
-})
+  })
+    .then(response => {
+      var contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      }
+      throw new TypeError("Oops, we haven't got JSON!");
+    })
+    .then(response => {
+      //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
+      console.log(response);
+      showArtist(response);
+    });
 }
 
 var artistList = [];
 
 function addArtist() {
-  var name = $("#name").val().trim();
-  var birthPlace = $("#birth_place").val().trim();
-  var dob = $("#dob").val().trim();
+  var name = $("#name")
+    .val()
+    .trim();
+  var birthPlace = $("#birth_place")
+    .val()
+    .trim();
+  var dob = $("#dob")
+    .val()
+    .trim();
   var favourite;
   if ($("#favourite").is(":checked")) {
     favourite = true;
@@ -45,28 +52,27 @@ function addArtist() {
     };
     ajaxCall("/addArtist", artist);
     console.log("message sent to the server");
-
   }
 }
+
 //retrieve list of artists and show in table
 function showArtist(artistListRes) {
   if (artistListRes) {
     var html =
       "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
-    var counter = 0;
+
     artistListRes.forEach(function(artist) {
-      counter++;
       html +=
         "<tr><td>" +
-        counter +
+        artist._id +
         "</td><td>" +
         artist.name +
         "</td><td>" +
-        artist.birthPlace +
+        artist.placeOfBirth +
         "</td><td>" +
-        artist.dob +
+        artist.dateOfBirth +
         "</td><td>" +
-        artist.favourite +
+        artist.status +
         "</td></tr>";
     });
     html += "</table>";
@@ -94,3 +100,42 @@ function searchArtist() {
     }
   }
 }
+
+function deleteById() {
+  var id = parseInt(document.getElementById("deleteInput").value, 10);
+  //send this is to the server and fetch the new list
+}
+
+function ajaxCall_fetchAllArtists(endPoint, data) {
+  //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
+  fetch(endPoint, {
+    method: "GET",
+    path: "./app.js",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      mode: "cors"
+    },
+    body: JSON.stringify(data)
+  })
+    .then(response => {
+      var contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return response;
+      }
+      throw new TypeError("Oops, we haven't got JSON!");
+    })
+    .then(response => {
+      //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
+      console.log(response);
+    });
+}
+
+$(document).ready(function() {
+  console.log("upload artists called by client");
+
+  artists_list = ajaxCall_fetchAllArtists("/uploadArtists");
+  showArtist(artists_list);
+
+  console.log("Artist list " + artists_list);
+});

@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const artistSchema = mongoose.Schema({
-  _id: mongoose.Types.ObjectId,
+  _id: Number,
   name: String,
   placeOfBirth: String,
-  dateOfBirth: Date,
+  dateOfBirth: String,
   status: Boolean
 });
 

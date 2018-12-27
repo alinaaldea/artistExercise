@@ -1,7 +1,6 @@
-
 var fs = require("fs");
 var path = require("path");
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 //server
 var express = require("express");
 var app = express();
@@ -19,25 +18,77 @@ var db = mongoose.connection;
 
 //model
 const Artist = require("./models/artist");
+
 const port = 3000;
-app.listen(port, () =>  {
-  console.log('Server running on port: %d', port);
+app.listen(port, () => {
+  console.log("Server running on port: %d", port);
 });
-app.use(express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, "src")));
 app.use(bodyParser.json());
 //HANDLE INITIAL CONNECTION
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/src/index.html');
+app.get("/", function(req, res) {
+  res.sendFile(__dirname + "/src/index.html");
 });
 
 //HANDLE POST METHOD HERE WITH ARTIST LIST
 var artistList = [];
-app.post("/addArtist", function(req,res){
+var counter = 0;
+app.post("/addArtist", function(req, res) {
   var newArtist = req.body;
-  artistList.push(newArtist);
-  console.log(artistList)
-  return res.json(artistList)
+  console.log("\n\n-------------------------");
+  console.log(newArtist);
+  var artist = new Artist({
+    _id: counter,
+    name: newArtist.name,
+    placeOfBirth: newArtist.birthPlace,
+    dateOfBirth: newArtist.dob,
+    status: newArtist.favourite
+  });
+  counter++;
 
-})
+  artist.save(function(err) {
+    if (err) console.log("couldn't save the artist in the database" + err);
+    else console.log("artist successfully saved in the database");
+  });
 
+  artistList.push(artist);
+  console.log(artistList);
+  return res.json(artistList);
+});
 
+//fetch all artists from database
+app.get("/uploadArtists", function(req, res) {
+  Artist.find({}, function(err, artists) {
+    if (err) console.log("Couldn't fetch the artist from the database: " + err);
+    console.log(
+      "\nserver fetched the artists from the database:\n" +
+        JSON.stringify(artists)
+    );
+
+    return res.json(JSON.stringify(artists));
+  });
+});
+
+//find artist by id
+app.post("/getById", function(req, res) {
+  var id = req;
+  var myArtist = Artist.findById(id, function(err, artist) {
+    if (error) console.log("Cannot find artist with id=" + id);
+  });
+  return res.json(myArtist);
+});
+
+//delete artist by id
+app.post("/deleteArtist", function(req, res) {
+  var id = req;
+
+  Artist.deleteOne(id, function(err, artist) {
+    if (error) console.log("Cannot find artist with id=" + id);
+  });
+
+  //return the list of remaining artists
+  Artist.find({}, function(err, artists) {
+    if (err) console.log("Couldn't fetch the artist from the database: " + err);
+    return res.json(JSON.stringify(artists));
+  });
+});
