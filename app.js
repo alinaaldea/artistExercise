@@ -2,6 +2,7 @@ var http = require("http");
 var fs = require("fs");
 var path = require("path");
 var mongoose = require("mongoose");
+var WebSocketServer = require("websocket").server;
 
 //Set up default mongoose connection
 mongoose.connect(
@@ -69,10 +70,24 @@ var server = http
   .listen(3000);
 console.log("Server running at http://127.0.0.1:3000");
 
-var io = require("socket.io")(server);
-io.on("connection", socket => {
-  socket.emit("welcome", "welcome to the socket.io server");
-  socket.on("disconnect", function() {
-    console.log("user disconnected");
+// create the server
+wsServer = new WebSocketServer({
+  httpServer: server
+});
+
+// WebSocket server
+wsServer.on("request", function(request) {
+  var connection = request.accept(null, request.origin);
+
+  // This is the most important callback for us, we'll handle
+  // all messages from users here.
+  connection.on("message", function(message) {
+    if (message.type === "utf8") {
+      // process WebSocket message
+    }
+  });
+
+  connection.on("close", function(connection) {
+    // close user connection
   });
 });
