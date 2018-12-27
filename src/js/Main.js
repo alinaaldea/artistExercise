@@ -115,8 +115,7 @@ function ajaxCall_fetchAllArtists(endPoint, data) {
       Accept: "application/json",
       "Content-Type": "application/json",
       mode: "cors"
-    },
-    body: JSON.stringify(data)
+    }
   })
     .then(response => {
       var contentType = response.headers.get("content-type");
@@ -128,14 +127,12 @@ function ajaxCall_fetchAllArtists(endPoint, data) {
     .then(response => {
       //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
       console.log(response);
+      showArtist(response);
     });
 }
 
 $(document).ready(function() {
   console.log("upload artists called by client");
-
-  artists_list = ajaxCall_fetchAllArtists("/uploadArtists");
-  showArtist(artists_list);
-
-  console.log("Artist list " + artists_list);
+  ajaxCall_fetchAllArtists("/uploadArtists");
+  
 });
