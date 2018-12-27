@@ -1,3 +1,4 @@
+const WebSocket = require("ws");
 var connection = new WebSocket("ws://127.0.0.1:3000");
 
 connection.onopen = function() {
