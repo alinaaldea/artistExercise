@@ -5,8 +5,7 @@ var bodyParser = require("body-parser");
 var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
-var artistsRoutes = require("./api/routes/artists");
-var artistRoutes = require("./api/routes/artist");
+var artistsRoutes = require("./routes/artists");
 
 //Set up default mongoose connection
 mongoose.connect(
@@ -20,12 +19,17 @@ var db = mongoose.connection;
 //model
 const Artist = require("./models/artist");
 
+
+
+
 const port = 3000;
 app.listen(port, () => {
   console.log("Server running on port: %d", port);
 });
 app.use(express.static(path.join(__dirname, "src")));
 app.use(bodyParser.json());
+app.use("/artists", artistsRoutes);
+
 //HANDLE INITIAL CONNECTION
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/src/index.html");
@@ -97,5 +101,3 @@ function compare(a, b) {
   return 0;
 }
 
-app.use("/artists", artistsRoutes);
-app.use("/artist", artistRoutes);

@@ -20,14 +20,7 @@ function ajaxCall(endPoint, data) {
     })
     .then(response => {
       //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
-      //CONCAT EXISTING LIST WITH NEW LIST & FILTER DUPLICATION
-      if (endPoint === "/addArtist") {
-        artistList = artistList.concat(response);
-      } else {
-        artistList = response;
-      }
-      console.log(artistList);
-      showArtist(artistList);
+      showArtist(response, endPoint);
     });
 }
 
@@ -49,7 +42,7 @@ function addArtist() {
   }
   var id;
   //CHECK IF ANY ARTIST EXIST, AND SET ID TO THE HIGHEST EXISTING ID + 1
-  if (artistList.length > 1) {
+  if (artistList.length >= 1) {
     id = parseInt(artistList[artistList.length - 1]._id) + 1;
     console.log(id);
   } else {
@@ -71,29 +64,30 @@ function addArtist() {
 }
 
 //retrieve list of artists and show in table
-function showArtist(artistListRes) {
+function showArtist(artistListRes, endPoint) {
   if (artistListRes) {
-    var html =
+    if(endPoint==="/uploadArtists"|| endPoint ==="/deleteArtist"){
+      artistList = artistListRes;
+      var html =
       "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
 
-    artistListRes.forEach(function(artist) {
-      html +=
-        "<tr><td>" +
-        artist._id +
-        "</td><td>" +
-        artist.name +
-        "</td><td>" +
-        artist.placeOfBirth +
-        "</td><td>" +
-        artist.dateOfBirth +
-        "</td><td>" +
-        artist.status +
-        "</td></tr>";
-    });
-    html += "</table>";
-    $("#artList")
-      .empty()
-      .append(html);
+      artistList.forEach(function(artist) {
+        html += putIntoRow(artist);
+      });
+      html += "</table>";
+      $("#artList").empty().append(html);
+    } 
+    else if(endPoint ==="/addArtist"){
+      var newArtist = artistListRes.pop();
+      artistList.push(newArtist);
+      html = putIntoRow(newArtist);
+      console.log(html)
+      $("#artistTable tr:last").after(html);
+      
+    } else {
+      alert("Endpoint not recognize")
+    }
+    
   }
 }
 
@@ -122,7 +116,25 @@ function deleteById() {
   console.log("Artist with id should be removed: ", id);
   //send this is to the server and fetch the new list
 }
+function putIntoRow(artist){
+  var html = "";
+  if(artist){
+    html +=
+          "<tr id=" + artist._id + "><td>" +
+          artist._id +
+          "</td><td>" +
+          artist.name +
+          "</td><td>" +
+          artist.placeOfBirth +
+          "</td><td>" +
+          artist.dateOfBirth +
+          "</td><td>" +
+          artist.status +
+          "</td></tr>";
+  }
+  return html;
 
+}
 $(document).ready(function() {
   console.log("Get existing artists from db");
   ajaxCall("/uploadArtists");
