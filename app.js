@@ -5,7 +5,8 @@ var bodyParser = require("body-parser");
 var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
-// var WebSocketServer = require("websocket").server;
+var artistsRoutes = require("./api/routes/artists");
+var artistRoutes = require("./api/routes/artist");
 
 //Set up default mongoose connection
 mongoose.connect(
@@ -90,10 +91,11 @@ app.post("/deleteArtist", function(req, res) {
     return res.json(artists);
   });
 });
-function compare(a,b) {
-  if (a._id < b._id)
-    return -1;
-  if (a._id > b._id)
-    return 1;
+function compare(a, b) {
+  if (a._id < b._id) return -1;
+  if (a._id > b._id) return 1;
   return 0;
 }
+
+app.use("/artists", artistsRoutes);
+app.use("/artist", artistRoutes);

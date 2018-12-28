@@ -1,4 +1,3 @@
-
 var artistList = [];
 function ajaxCall(endPoint, data) {
   //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
@@ -22,16 +21,15 @@ function ajaxCall(endPoint, data) {
     .then(response => {
       //LOG THE RESPONSE AND SHOW THE LIST OF ARTIST SENT FROM BACKEND
       //CONCAT EXISTING LIST WITH NEW LIST & FILTER DUPLICATION
-      if(endPoint === "/addArtist"){
-        artistList = artistList.concat(response)
+      if (endPoint === "/addArtist") {
+        artistList = artistList.concat(response);
       } else {
-         artistList = response
+        artistList = response;
       }
       console.log(artistList);
       showArtist(artistList);
     });
 }
-
 
 function addArtist() {
   var name = $("#name")
@@ -51,17 +49,17 @@ function addArtist() {
   }
   var id;
   //CHECK IF ANY ARTIST EXIST, AND SET ID TO THE HIGHEST EXISTING ID + 1
-  if(artistList.length>1){
-    id = parseInt(artistList[artistList.length-1]._id)+1;
-    console.log(id)
-  }else{
+  if (artistList.length > 1) {
+    id = parseInt(artistList[artistList.length - 1]._id) + 1;
+    console.log(id);
+  } else {
     id = 0;
-    console.log(id)
+    console.log(id);
   }
   if (name && birthPlace && dob) {
     //store the artist in the local list
     var artist = {
-      _id:id,
+      _id: id,
       name: name,
       birthPlace: birthPlace,
       dob: dob,
@@ -93,7 +91,9 @@ function showArtist(artistListRes) {
         "</td></tr>";
     });
     html += "</table>";
-    $("#artList").empty().append(html);
+    $("#artList")
+      .empty()
+      .append(html);
   }
 }
 
@@ -118,9 +118,10 @@ function searchArtist() {
 
 function deleteById() {
   var id = parseInt(document.getElementById("deleteInput").value, 10);
+  ajaxCall("/deleteArtist", id);
+  console.log("Artist with id should be removed: ", id);
   //send this is to the server and fetch the new list
 }
-
 
 $(document).ready(function() {
   console.log("Get existing artists from db");
