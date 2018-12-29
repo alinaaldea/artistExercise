@@ -82,19 +82,22 @@ app.post("/getById", function(req, res) {
 });
 
 //delete artist by id
-app.post("/deleteArtist", function(req, res) {
-  var id = req;
+// app.post("/deleteArtist", function(req, res) {
+//   var id = req.body._id;
+//   var myArtist = Artist.findById(id, function(err, artist) {
+//     if (err) console.log("Cannot find artist with id=" + id);
+//     return artist
+//   });
+//   Artist.deleteOne(myArtist, function(err, artist) {
+//     if (err) console.log("Cannot find artist with id=" + id);
+//   });
 
-  Artist.deleteOne(id, function(err, artist) {
-    if (error) console.log("Cannot find artist with id=" + id);
-  });
-
-  //return the list of remaining artists
-  Artist.find({}, function(err, artists) {
-    if (err) console.log("Couldn't fetch the artist from the database: " + err);
-    return res.json(artists);
-  });
-});
+//   //return the list of remaining artists
+//   Artist.find({}, function(err, artists) {
+//     if (err) console.log("Couldn't fetch the artist from the database: " + err);
+//     return res.json(artists);
+//   });
+// });
 function compare(a, b) {
   if (a._id < b._id) return -1;
   if (a._id > b._id) return 1;

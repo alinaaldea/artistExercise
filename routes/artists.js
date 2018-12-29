@@ -10,7 +10,7 @@ router.get("/", function(req, res, next) {
   })
 });
 /* GET SINGLE ARTIST BY ID */
-router.get('/:id', function(req, res, next) {
+router.get('/getArtist/:id', function(req, res, next) {
   Artist.findById(req.params.id, function (err, artist) {
     if (err) return next(err);
     res.json(artist);
@@ -18,7 +18,7 @@ router.get('/:id', function(req, res, next) {
 });
 
 /* SAVE ARTIST */
-router.post('/', function(req, res, next) {
+router.post('/add', function(req, res, next) {
   Artist.create(req.body, function (err, newArtist) {
     if (err) return next(err);
     res.json(newArtist);
@@ -26,7 +26,7 @@ router.post('/', function(req, res, next) {
 });
 
 /* UPDATE ARTIST */
-router.put('/:id', function(req, res, next) {
+router.put('/put/:id', function(req, res, next) {
   Artist.findByIdAndUpdate(req.params.id, req.body, function (err, artist) {
     if (err) return next(err);
     res.json(artist);
@@ -34,11 +34,16 @@ router.put('/:id', function(req, res, next) {
 });
 
 /* DELETE ARTIST */
-router.delete('/:id', function(req, res, next) {
-  Artist.findByIdAndRemove(req.params.id, req.body, function (err, artist) {
-    if (err) return next(err);
-    res.json(artist);
+router.delete('/delete/:id', function(req, res, next) {
+  Artist.findById(req.params.id, function (err, artist) {
+    if(err) { return next(err); }
+    if(!artist) { return res.send(404); }
+    artist.remove(function(err) {
+      if(err) { return handleError(res, err); }
+      return res.send(204);
+    });
   });
 });
+
 
 module.exports = router;

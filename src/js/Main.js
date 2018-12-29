@@ -44,10 +44,8 @@ function addArtist() {
   //CHECK IF ANY ARTIST EXIST, AND SET ID TO THE HIGHEST EXISTING ID + 1
   if (artistList.length >= 1) {
     id = parseInt(artistList[artistList.length - 1]._id) + 1;
-    console.log(id);
   } else {
     id = 0;
-    console.log(id);
   }
   if (name && birthPlace && dob) {
     //store the artist in the local list
@@ -68,6 +66,7 @@ function showArtist(artistListRes, endPoint) {
   if (artistListRes) {
     if(endPoint==="/uploadArtists"|| endPoint ==="/deleteArtist"){
       artistList = artistListRes;
+      console.log(artistList)
       var html =
       "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
 
@@ -78,14 +77,22 @@ function showArtist(artistListRes, endPoint) {
       $("#artList").empty().append(html);
     } 
     else if(endPoint ==="/addArtist"){
+      console.log(artistListRes);
       var newArtist = artistListRes.pop();
+      console.log(newArtist)
       artistList.push(newArtist);
+      console.log(artistList)
       html = putIntoRow(newArtist);
       console.log(html)
       $("#artistTable tr:last").after(html);
       
-    } else {
-      alert("Endpoint not recognize")
+    } else if(endPoint === "/getArtist" ){
+      var foundArtist = artistListRes;
+      var html =
+      "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
+      html += putIntoRow(foundArtist);
+      html += "</table>";
+      $("#artList").empty().append(html);
     }
     
   }
@@ -111,10 +118,29 @@ function searchArtist() {
 }
 
 function deleteById() {
-  var id = parseInt(document.getElementById("deleteInput").value, 10);
-  ajaxCall("/deleteArtist", id);
-  console.log("Artist with id should be removed: ", id);
+  var id = document.getElementById("deleteInput").value;
+  console.log("Artist with id should be removed: " +  id);
   //send this is to the server and fetch the new list
+  $.ajax({
+    url: "http://localhost:3000/artists/delete/"+id ,
+    type: 'DELETE',
+    headers: {"Id": id},
+    success: function(){
+      $("#"+ id).remove();
+    },
+  });
+  }
+function findById(){
+  var id = document.getElementById("myInput").value
+  if(id){
+    id =  "/" + id;
+    fetchAPI("/getArtist", id);
+  }
+ 
+}
+function reset(){
+  $("#myInput").innerHTML().empty();
+  fetchAPI("/uploadArtists")
 }
 function putIntoRow(artist){
   var html = "";
@@ -135,7 +161,24 @@ function putIntoRow(artist){
   return html;
 
 }
+function fetchAPI(endPoint, urlTxt){
+  if(urlTxt){
+    var url ="http://localhost:3000/artists" + endPoint + urlTxt
+  } else {
+    var url ="http://localhost:3000/artists"
+  }
+
+  fetch(url).then(response => {
+    if(response){
+      return response.json();
+    }else {
+      throw new TypeError("Oops, we haven't got JSON!");
+    }
+  }).then(response => {
+    showArtist(response, endPoint)
+  })
+}
 $(document).ready(function() {
   console.log("Get existing artists from db");
-  ajaxCall("/uploadArtists");
+  fetchAPI("/uploadArtists");
 });
