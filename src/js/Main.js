@@ -56,8 +56,18 @@ function addArtist() {
       dob: dob,
       favourite: favourite
     };
-    ajaxCall("/addArtist", artist);
-    console.log("message sent to the server");
+    // ajaxCall("/addArtist", artist);
+    console.log(artist);
+    $.ajax({
+      url: "http://localhost:3000/artists/add",
+      type: 'POST',
+      data: JSON.stringify(artist),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: fetchAPI("/uploadArtists")
+    
+    });
+    
   }
 }
 

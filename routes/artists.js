@@ -19,10 +19,23 @@ router.get('/getArtist/:id', function(req, res, next) {
 
 /* SAVE ARTIST */
 router.post('/add', function(req, res, next) {
-  Artist.create(req.body, function (err, newArtist) {
-    if (err) return next(err);
-    res.json(newArtist);
+  var newArtist = req.body
+  console.log(newArtist);
+  var artist = new Artist({
+    _id: parseInt(newArtist._id),
+    name: newArtist.name,
+    placeOfBirth: newArtist.birthPlace,
+    dateOfBirth: newArtist.dob,
+    status: newArtist.favourite
+  }).save(function(err) {
+    if (err) console.log("couldn't save the artist in the database" + err); 
+    else console.log("SAVED!"); res.json(artist)
   });
+  // Artist.create(artist, function (err, addedArtist) {
+  //   if (err) return next(err);
+  //   res.json(addedArtist);
+  // });
+  
 });
 
 /* UPDATE ARTIST */
