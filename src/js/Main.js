@@ -1,4 +1,5 @@
 var artistList = [];
+//FUNCTION OUTDATED FROM 2ND EXERCISE
 function ajaxCall(endPoint, data) {
   //ENDPOINT SPECIFIED TO WHICH FUNCTION IN BACKEND THIS AJAX CALL IS MEANT FOR, EX: FOR addArtist function end point is /addArtist
   fetch(endPoint, {
@@ -64,7 +65,13 @@ function addArtist() {
       data: JSON.stringify(artist),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
-      success: fetchAPI("/uploadArtists")
+      success: function(dataResponse){
+        showArtist(dataResponse);
+        alert("Artist successfully added!")
+      },
+      error: function(err){
+        alert("Could not delete artist with this ID")
+      }
     
     });
     
@@ -74,8 +81,15 @@ function addArtist() {
 //retrieve list of artists and show in table
 function showArtist(artistListRes, endPoint) {
   if (artistListRes) {
-    if(endPoint==="/uploadArtists"|| endPoint ==="/deleteArtist"){
-      artistList = artistListRes;
+    if(endPoint === "/getArtist"){
+      var foundArtist = artistListRes;
+      var html =
+      "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
+      html += putIntoRow(foundArtist);
+      html += "</table>";
+      $("#artList").empty().append(html);
+    }else {
+       artistList = artistListRes;
       console.log(artistList)
       var html =
       "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
@@ -85,29 +99,12 @@ function showArtist(artistListRes, endPoint) {
       });
       html += "</table>";
       $("#artList").empty().append(html);
-    } 
-    else if(endPoint ==="/addArtist"){
-      console.log(artistListRes);
-      var newArtist = artistListRes.pop();
-      console.log(newArtist)
-      artistList.push(newArtist);
-      console.log(artistList)
-      html = putIntoRow(newArtist);
-      console.log(html)
-      $("#artistTable tr:last").after(html);
-      
-    } else if(endPoint === "/getArtist" ){
-      var foundArtist = artistListRes;
-      var html =
-      "<table id='artistTable'><tr><th>ID</th><th>Name</th><th>Place of Birth</th><th>Date of Birth</th><th>Favorite</th></tr>";
-      html += putIntoRow(foundArtist);
-      html += "</table>";
-      $("#artList").empty().append(html);
     }
+   
     
   }
 }
-
+//OUTDATED FUNCTION, USED FOR 2ND EXERCISE
 function searchArtist() {
   var input, filter, table, tr, td, i;
   input = document.getElementById("myInput");
@@ -135,21 +132,26 @@ function deleteById() {
     url: "http://localhost:3000/artists/delete/"+id ,
     type: 'DELETE',
     headers: {"Id": id},
-    success: function(){
-      $("#"+ id).remove();
+    success: function(data){
+      showArtist(data);
+      alert("Artist successfully deleted");
     },
+    error: function(err){
+      alert("Could not delete artist with this ID")
+    }
   });
   }
 function findById(){
   var id = document.getElementById("myInput").value
   if(id){
+    //define the end point and send to server
     id =  "/" + id;
     fetchAPI("/getArtist", id);
   }
  
 }
 function reset(){
-  $("#myInput").innerHTML().empty();
+  $("#myInput").val("");
   fetchAPI("/uploadArtists")
 }
 function putIntoRow(artist){
@@ -171,6 +173,7 @@ function putIntoRow(artist){
   return html;
 
 }
+//FUNCTION TO FIND ARTIST AND LOAD ALL ARTIST
 function fetchAPI(endPoint, urlTxt){
   if(urlTxt){
     var url ="http://localhost:3000/artists" + endPoint + urlTxt

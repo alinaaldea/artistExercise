@@ -28,8 +28,15 @@ router.post('/add', function(req, res, next) {
     dateOfBirth: newArtist.dob,
     status: newArtist.favourite
   }).save(function(err) {
-    if (err) console.log("couldn't save the artist in the database" + err); 
-    else console.log("SAVED!"); res.json(artist)
+    if (err){
+      console.log("couldn't save the artist in the database" + err);
+    }  else {
+      console.log("SAVED!"); 
+      Artist.find(function(err, artists){
+        if(err) return next(err);
+        res.json(artists);
+      })
+    }
   });
   // Artist.create(artist, function (err, addedArtist) {
   //   if (err) return next(err);
@@ -53,7 +60,10 @@ router.delete('/delete/:id', function(req, res, next) {
     if(!artist) { return res.send(404); }
     artist.remove(function(err) {
       if(err) { return handleError(res, err); }
-      return res.send(204);
+      Artist.find(function(err, artists){
+        if(err) return next(err);
+        res.json(artists);
+      })
     });
   });
 });
